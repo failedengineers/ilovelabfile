@@ -31,6 +31,19 @@
   "@context":"https://schema.org",
   "@graph":[
     {
+      "@type":"Organization",
+      "name":"iLoveLabFile",
+      "url":"{{ request.build_absolute_uri }}",
+      "description":"Free online PDF text editor built for GGSIPU and DTU students to correct names, enrollment numbers and roll numbers across practical and lab files."
+    },
+    {
+      "@type":"BreadcrumbList",
+      "itemListElement":[
+        {"@type":"ListItem","position":1,"name":"Home","item":"{{ request.build_absolute_uri }}"},
+        {"@type":"ListItem","position":2,"name":"GGSIPU & DTU PDF Editor","item":"{{ request.build_absolute_uri }}"}
+      ]
+    },
+    {
       "@type":"WebApplication",
       "name":"iLoveLabFile",
       "applicationCategory":"UtilitiesApplication",
@@ -55,7 +68,9 @@
         {"@type":"Question","name":"Does iLoveLabFile replace every occurrence on a page?","acceptedAnswer":{"@type":"Answer","text":"No. For each Find and Replace pair, iLoveLabFile changes only the first matching occurrence it finds on each page — the other matches on that page are left as they are."}},
         {"@type":"Question","name":"Can I use this for a GGSIPU or DTU practical file?","acceptedAnswer":{"@type":"Answer","text":"Yes. It is commonly used to change a name, enrollment number or roll number that repeats on every page of a GGSIPU (Guru Gobind Singh Indraprastha University) or DTU lab file, practical file or workshop file."}},
         {"@type":"Question","name":"What if the same text appears once on several pages?","acceptedAnswer":{"@type":"Answer","text":"Each page is searched on its own, so the first match on page 1, the first match on page 2, and so on are each replaced."}},
-        {"@type":"Question","name":"Can I make more than one change at a time?","acceptedAnswer":{"@type":"Answer","text":"Yes. Add as many Find and Replace pairs as you need before processing the PDF."}}
+        {"@type":"Question","name":"Can I make more than one change at a time?","acceptedAnswer":{"@type":"Answer","text":"Yes. Add as many Find and Replace pairs as you need before processing the PDF."}},
+        {"@type":"Question","name":"Is iLoveLabFile free to use?","acceptedAnswer":{"@type":"Answer","text":"Yes, iLoveLabFile is completely free for students to use, with no sign-up required."}},
+        {"@type":"Question","name":"Will the formatting, tables and diagrams in my PDF stay the same?","acceptedAnswer":{"@type":"Answer","text":"Yes. iLoveLabFile edits the underlying text directly, so fonts, spacing, tables and diagrams in the original PDF remain unchanged."}}
       ]
     }
   ]
@@ -65,6 +80,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <style>
 :root{
@@ -232,11 +248,16 @@ input[type=file]{display:none}
 .preview-art i:nth-child(2){width:70%}.preview-art i:nth-child(3){width:83%}.preview-art i:nth-child(4){width:58%}
 .preview-empty strong{display:block;font-family:var(--serif);font-size:13.5px;color:#6a6151}
 .preview-empty p{font-size:10.5px;line-height:1.6;max-width:230px;margin:6px auto 0}
-.pdf-frame{width:100%;height:100%;border:0;background:#fff}
 .after-badge{
   position:absolute;top:12px;right:12px;z-index:2;font-family:var(--mono);font-size:9.5px;color:var(--green);
   background:rgba(255,255,255,.92);border:1px solid rgba(60,107,79,.3);padding:5px 9px;border-radius:3px;
 }
+.pdf-canvas-wrap{width:100%;height:100%;overflow:auto;display:none;flex-direction:column;align-items:center;position:relative;background:#fff}
+.pdf-canvas-wrap.show{display:flex}
+.pdf-canvas{max-width:100%;height:auto;display:block;box-shadow:0 8px 24px rgba(0,0,0,.16);margin:14px auto 60px}
+.pdf-nav{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.95);border:1px solid rgba(34,30,23,.16);border-radius:20px;padding:6px 12px;font-family:var(--mono);font-size:11px;color:var(--ink);z-index:3}
+.pdf-nav-btn{width:24px;height:24px;border-radius:50%;border:1px solid rgba(34,30,23,.18);background:#fff;color:var(--ink);flex:none}
+.pdf-nav-btn:disabled{opacity:.3;cursor:not-allowed}
 .preview-foot{padding:13px 18px;border-top:1px solid rgba(255,255,255,.07)}
 .download-btn{display:none;width:100%;height:44px;border-radius:3px;border:1px solid var(--green);background:rgba(60,107,79,.12);color:#9adfb8;font-size:12px;font-weight:700;align-items:center;justify-content:center;gap:8px}
 .download-btn.show{display:flex}
@@ -245,7 +266,7 @@ input[type=file]{display:none}
 /* ---- explain ---- */
 .explain{margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .explain .sheet{padding:19px 20px}
-.explain h3{margin:0;font-family:var(--serif);font-size:15px;font-weight:700}
+.explain h2{margin:0;font-family:var(--serif);font-size:15px;font-weight:700}
 .explain p{margin:8px 0 0;font-size:12px;color:var(--ink-soft);line-height:1.7}
 .mapping{margin-top:13px;display:grid;grid-template-columns:1fr 26px 1fr;align-items:center;gap:7px;font-family:var(--mono);font-size:11px}
 .mapping div{padding:10px 11px;border-radius:3px;background:rgba(34,30,23,.03);border:1px solid var(--paper-line)}
@@ -255,13 +276,14 @@ input[type=file]{display:none}
 /* ---- uses ---- */
 .uses{margin-top:14px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
 .uses .sheet{padding:17px}
-.use h4{margin:11px 0 5px;font-family:var(--serif);font-size:13px;font-weight:700}
+.use h3{margin:11px 0 5px;font-family:var(--serif);font-size:13px;font-weight:700}
 .use p{margin:0;font-size:10.5px;line-height:1.6;color:var(--ink-soft)}
 .use .tag{font-family:var(--mono);font-size:9px;color:var(--red)}
 
 /* ---- seo copy ---- */
 .seo{max-width:900px;margin-top:52px;padding-top:32px;border-top:1px solid rgba(244,239,226,.08)}
 .seo h2{font-family:var(--serif);font-size:26px;font-weight:700;letter-spacing:-.01em;margin:0 0 10px;color:var(--paper)}
+.seo h3{font-family:var(--serif);font-size:18px;font-weight:700;letter-spacing:-.01em;margin:26px 0 8px;color:var(--paper)}
 .seo p{margin:0 0 12px;font-size:13px;line-height:1.85;color:#b6ac95}
 .seo p b{color:var(--paper);font-weight:600}
 .faq{display:flex;flex-direction:column;gap:8px;margin-top:20px}
@@ -333,7 +355,7 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
       <span class="correction"><span class="old">Kalash Gulati</span><span class="new">Vani Chaba</span></span><br>
       corrected on every page.
     </h1>
-    <p>Upload a lab file, practical file or assignment PDF. Tell iLoveLabFile what to find and what to replace it with — <strong>it edits the text directly</strong>, so formatting, tables and diagrams stay exactly as they were.</p>
+    <p>Upload a lab file, practical file or assignment PDF. Tell iLoveLabFile what to find and what to replace it with — <strong>it edits the text directly</strong>, so formatting, tables and diagrams stay exactly as they were. Built specifically for <strong>GGSIPU (Guru Gobind Singh Indraprastha University)</strong> and <strong>DTU (Delhi Technological University)</strong> students correcting a name, enrollment number or roll number across a multi-page practical file.</p>
   </header>
 
   <main>
@@ -415,14 +437,28 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
               <strong>Your PDF appears here</strong>
               <p>Choose a PDF to check the original before you make any changes.</p>
             </div>
-            <iframe class="pdf-frame" id="pdfFrameBefore" title="Original PDF preview" style="display:none"></iframe>
+            <div class="pdf-canvas-wrap" id="pdfWrapBefore">
+              <canvas class="pdf-canvas" id="pdfCanvasBefore"></canvas>
+              <div class="pdf-nav" id="pdfNavBefore">
+                <button type="button" class="pdf-nav-btn" data-dir="-1">‹</button>
+                <span id="pdfPageLabelBefore">1 / 1</span>
+                <button type="button" class="pdf-nav-btn" data-dir="1">›</button>
+              </div>
+            </div>
           </div>
           <div class="preview-pane" id="paneAfter">
             <div class="after-badge">Corrected copy</div>
-            <iframe class="pdf-frame" id="pdfFrameAfter" title="Corrected PDF preview"></iframe>
+            <div class="pdf-canvas-wrap" id="pdfWrapAfter">
+              <canvas class="pdf-canvas" id="pdfCanvasAfter"></canvas>
+              <div class="pdf-nav" id="pdfNavAfter">
+                <button type="button" class="pdf-nav-btn" data-dir="-1">‹</button>
+                <span id="pdfPageLabelAfter">1 / 1</span>
+                <button type="button" class="pdf-nav-btn" data-dir="1">›</button>
+              </div>
+            </div>
           </div>
         </div>
-                <div class="preview-foot">
+        <div class="preview-foot">
           <a class="download-btn" id="downloadBtn" download>Download corrected PDF</a>
           <a class="download-btn" id="openTabBtn" target="_blank" rel="noopener" style="margin-top:8px;border-color:var(--blue);background:rgba(35,61,85,.12);color:#9ec3e6;">Open preview in new tab</a>
         </div>
@@ -432,28 +468,34 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
 
     <section class="explain" aria-label="How iLoveLabFile works">
       <article class="sheet">
-        <h3>What are we actually doing?</h3>
+        <h2>What are we actually doing?</h2>
         <p>You're telling iLoveLabFile: <b>“find this exact text and replace the first copy of it on every page it appears on.”</b> That's the common case for a repeated student detail in a multi-page academic file.</p>
         <div class="mapping"><div><b>FIND</b>Kalash Gulati</div><span>→</span><div><b>REPLACE</b>Vani Chaba</div></div>
       </article>
       <article class="sheet">
-        <h3>Why “first match per page”?</h3>
+        <h2>Why “first match per page”?</h2>
         <p>It keeps the edit predictable. If a page repeats the same name several times, iLoveLabFile won't blindly overwrite every copy — it updates the first occurrence on that page and leaves the rest untouched.</p>
         <div class="mapping"><div><b>PAGE 1</b>first match → changed</div><span>+</span><div><b>PAGE 2</b>first match → changed</div></div>
       </article>
     </section>
 
     <section class="uses" aria-label="Popular document types">
-      <article class="sheet use"><span class="tag">GGSIPU</span><h4>College &amp; university</h4><p>Names, enrollment numbers, roll numbers, registrations and course details.</p></article>
-      <article class="sheet use"><span class="tag">DTU</span><h4>Lab &amp; practical files</h4><p>Student details, experiment records and repeated academic information.</p></article>
-      <article class="sheet use"><span class="tag">B.TECH</span><h4>Assignments</h4><p>Update student and subject information without rebuilding the PDF.</p></article>
-      <article class="sheet use"><span class="tag">WORKSHOP</span><h4>Workshop files</h4><p>Batch, section, student and course information in workshop documents.</p></article>
+      <article class="sheet use"><span class="tag">GGSIPU</span><h3>College &amp; university</h3><p>Names, enrollment numbers, roll numbers, registrations and course details.</p></article>
+      <article class="sheet use"><span class="tag">DTU</span><h3>Lab &amp; practical files</h3><p>Student details, experiment records and repeated academic information.</p></article>
+      <article class="sheet use"><span class="tag">B.TECH</span><h3>Assignments</h3><p>Update student and subject information without rebuilding the PDF.</p></article>
+      <article class="sheet use"><span class="tag">WORKSHOP</span><h3>Workshop files</h3><p>Batch, section, student and course information in workshop documents.</p></article>
     </section>
 
     <section class="seo">
       <h2>PDF text editor built for GGSIPU &amp; DTU practical files</h2>
       <p>iLoveLabFile is a free online <b>PDF text editor</b> for targeted corrections. Students at <b>GGSIPU — Guru Gobind Singh Indraprastha University</b> and <b>DTU — Delhi Technological University</b> use it to change a name in a PDF, replace an enrollment number, update a roll number, correct a registration ID or fix a course code across an entire <b>lab file, practical file or workshop file</b> — without retyping or reformatting the document.</p>
       <p>The processing is deliberately simple to reason about: for each Find → Replace pair, iLoveLabFile searches the PDF <b>page by page</b> and changes only the <b>first matching occurrence</b> on each page. That keeps results predictable on documents where the same student detail repeats on every page, which is the normal shape of a GGSIPU or DTU B.Tech practical file.</p>
+
+      <h3>Change a name or enrollment number in a GGSIPU practical file</h3>
+      <p>GGSIPU practical and lab files usually repeat the same student name, enrollment number and batch on every experiment page. If any of these details are wrong or need updating for resubmission, iLoveLabFile finds the exact text on each page and swaps it — the rest of the document, including diagrams and tables, stays untouched.</p>
+
+      <h3>Update roll number or batch in a DTU lab file</h3>
+      <p>DTU lab files follow a similar repeated-header format across every experiment. iLoveLabFile lets you correct a roll number, batch code or subject name across the whole document in one pass, directly from a phone, tablet or laptop — no desktop software required.</p>
 
       <div class="faq">
         <details open>
@@ -471,6 +513,14 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
         <details>
           <summary>Can I make multiple changes in one PDF?</summary>
           <p>Yes. Add multiple Find → Replace pairs before submitting the document.</p>
+        </details>
+        <details>
+          <summary>Is iLoveLabFile free to use?</summary>
+          <p>Yes, iLoveLabFile is completely free for students to use, with no sign-up required.</p>
+        </details>
+        <details>
+          <summary>Will the formatting, tables and diagrams in my PDF stay the same?</summary>
+          <p>Yes. iLoveLabFile edits the underlying text directly, so fonts, spacing, tables and diagrams in the original PDF remain unchanged.</p>
         </details>
       </div>
     </section>
@@ -503,10 +553,8 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
   const tabAfter = $("tabAfter");
   const paneBefore = $("paneBefore");
   const paneAfter = $("paneAfter");
-  const pdfFrameBefore = $("pdfFrameBefore");
-  const pdfFrameAfter = $("pdfFrameAfter");
   const previewEmpty = $("previewEmpty");
-    const downloadBtn = $("downloadBtn");
+  const downloadBtn = $("downloadBtn");
   const openTabBtn = $("openTabBtn");
   const toast = $("toast");
 
@@ -540,14 +588,91 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
     return String(v).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
   }
 
+  /* ---- PDF.js canvas viewer (works on phones, unlike <iframe>) ---- */
+  let pdfjsReady = null;
+  function ensurePdfJs(){
+    if(pdfjsReady) return pdfjsReady;
+    pdfjsReady = new Promise((resolve, reject) => {
+      const check = () => {
+        if(window.pdfjsLib){
+          window.pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+          resolve(window.pdfjsLib);
+        } else {
+          setTimeout(check, 50);
+        }
+      };
+      check();
+      setTimeout(() => reject(new Error("PDF.js failed to load")), 8000);
+    });
+    return pdfjsReady;
+  }
+
+  function createPdfViewer(wrapId, canvasId, labelId, navId){
+    const wrap = $(wrapId);
+    const canvas = $(canvasId);
+    const label = $(labelId);
+    const nav = $(navId);
+    let pdfDoc = null, pageNum = 1, renderToken = 0;
+
+    async function renderPage(){
+      if(!pdfDoc) return;
+      const myToken = ++renderToken;
+      const page = await pdfDoc.getPage(pageNum);
+      const base = page.getViewport({ scale: 1 });
+      const width = Math.max(wrap.clientWidth - 28, 100);
+      const viewport = page.getViewport({ scale: width / base.width });
+      if(myToken !== renderToken) return;
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+      if(myToken !== renderToken) return;
+      label.textContent = `${pageNum} / ${pdfDoc.numPages}`;
+      nav.querySelector('[data-dir="-1"]').disabled = pageNum <= 1;
+      nav.querySelector('[data-dir="1"]').disabled = pageNum >= pdfDoc.numPages;
+    }
+
+    nav.addEventListener("click", e => {
+      const btn = e.target.closest(".pdf-nav-btn");
+      if(!btn || !pdfDoc) return;
+      const next = pageNum + Number(btn.dataset.dir);
+      if(next < 1 || next > pdfDoc.numPages) return;
+      pageNum = next;
+      renderPage();
+    });
+
+    window.addEventListener("resize", () => { if(pdfDoc) renderPage(); });
+
+    return {
+      async load(url){
+        wrap.classList.add("show");
+        const pdfjsLib = await ensurePdfJs();
+        pdfDoc = await pdfjsLib.getDocument(url).promise;
+        pageNum = 1;
+        await renderPage();
+      },
+      clear(){
+        pdfDoc = null;
+        wrap.classList.remove("show");
+        const ctx = canvas.getContext("2d");
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        label.textContent = "1 / 1";
+      },
+      rerender(){ if(pdfDoc) renderPage(); }
+    };
+  }
+
+  const beforeViewer = createPdfViewer("pdfWrapBefore","pdfCanvasBefore","pdfPageLabelBefore","pdfNavBefore");
+  const afterViewer = createPdfViewer("pdfWrapAfter","pdfCanvasAfter","pdfPageLabelAfter","pdfNavAfter");
+
   function setTab(name){
     const showAfter = name === "after" && !tabAfter.disabled;
     tabBefore.classList.toggle("active", !showAfter);
     tabAfter.classList.toggle("active", showAfter);
     paneBefore.classList.toggle("active", !showAfter);
     paneAfter.classList.toggle("active", showAfter);
+    if(showAfter) afterViewer.rerender(); else beforeViewer.rerender();
   }
-    function syncOpenTabBtn(){
+  function syncOpenTabBtn(){
     const showingAfter = paneAfter.classList.contains("active");
     const url = showingAfter ? afterURL : beforeURL;
     if(url){ openTabBtn.href = url; openTabBtn.classList.add("show"); }
@@ -601,9 +726,8 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
     validate();
     if (shouldFocus) row.querySelector("input").focus({ preventScroll: true });
     return row;
-}
+  }
 
-// One default replacement row — no focus, no scroll.
   function data(){
     return [...rows.children].map(row => {
       const inputs = row.querySelectorAll("input");
@@ -645,12 +769,11 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
 
     if(beforeURL) URL.revokeObjectURL(beforeURL);
     beforeURL = URL.createObjectURL(file);
-    pdfFrameBefore.src = beforeURL;
-    pdfFrameBefore.style.display = "block";
     previewEmpty.style.display = "none";
 
     resetAfter();
     validate();
+    beforeViewer.load(beforeURL).catch(() => toastMsg("Couldn't preview this PDF."));
     syncOpenTabBtn();
   }
 
@@ -659,17 +782,16 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
     fileCard.style.display = "none";
 
     if(beforeURL){ URL.revokeObjectURL(beforeURL); beforeURL = null; }
-    pdfFrameBefore.removeAttribute("src");
-    pdfFrameBefore.style.display = "none";
+    beforeViewer.clear();
     previewEmpty.style.display = "block";
 
     resetAfter();
     validate();
   }
 
-    function resetAfter(){
+  function resetAfter(){
     if(afterURL){ URL.revokeObjectURL(afterURL); afterURL = null; }
-    pdfFrameAfter.removeAttribute("src");
+    afterViewer.clear();
     tabAfter.disabled = true;
     downloadBtn.classList.remove("show");
     downloadBtn.removeAttribute("href");
@@ -717,16 +839,16 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
       } else if(ctype.includes("application/pdf")){
         const blob = await res.blob();
         afterURL = URL.createObjectURL(blob);
-        pdfFrameAfter.src = afterURL;
         tabAfter.disabled = false;
         setTab("after");
+        await afterViewer.load(afterURL).catch(() => toastMsg("Couldn't preview the corrected PDF."));
 
         const outName = originalFileName.replace(/\.pdf$/i, "") + "_corrected.pdf";
         downloadBtn.href = afterURL;
         downloadBtn.setAttribute("download", outName);
-         downloadBtn.classList.add("show");
+        downloadBtn.classList.add("show");
 
-          actionCopy.innerHTML = "<strong>Done.</strong><br>Compare Original vs. Corrected on the right, then download.";
+        actionCopy.innerHTML = "<strong>Done.</strong><br>Compare Original vs. Corrected on the right, then download.";
         syncOpenTabBtn();
         toastMsg("Corrected PDF is ready to preview.");
       } else {
@@ -745,8 +867,8 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
     }
   });
 
-  // One default replacement row.
-   addRow(false);
+  // One default replacement row — no focus, no scroll.
+  addRow(false);
 })();
 </script>
 </body>
