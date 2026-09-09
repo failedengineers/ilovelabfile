@@ -33,3 +33,14 @@ def file(request):
 
 def custom_404(request, exception):
     return render(request, '404.html', status=404)
+
+
+# file_editor/views.py
+def guide_ggsipu(request):
+    return render(request, 'guide-ggsipu.html')
+
+def guide_dtu(request):
+    return render(request, 'guide-dtu.html')
+
+def guide_replace_text(request):
+    return render(request, 'guide-replace-text.html')

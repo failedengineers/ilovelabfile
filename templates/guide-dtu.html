@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17130f">
+<title>Edit Name & Roll Number in a DTU Lab File PDF — Free Tool | iLoveLabFile</title>
+<meta name="description" content="Change a name or roll number across every page of a DTU lab file or practical file PDF. Free, browser-based, keeps your original formatting intact.">
+<meta name="keywords" content="dtu lab file pdf editor, dtu practical file pdf, edit name in dtu pdf, change roll number dtu pdf, delhi technological university pdf editor, dtu workshop file pdf">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<link rel="canonical" href="{{ request.build_absolute_uri }}">
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="Edit Name & Roll Number in a DTU Lab File PDF — Free Tool | iLoveLabFile">
+<meta property="og:description" content="Change a name or roll number across every page of a DTU lab file or practical file PDF. Free, browser-based, keeps your original formatting intact.">
+<meta property="og:url" content="{{ request.build_absolute_uri }}">
+<meta property="og:site_name" content="iLoveLabFile">
+<meta property="og:locale" content="en_IN">
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"HowTo",
+  "name":"How to edit your name and roll number in a DTU lab file PDF",
+  "description":"Change a name or roll number across every page of a DTU lab file or practical file PDF. Free, browser-based, keeps your original formatting intact.",
+  "step": [{"@type": "HowToStep", "name": "Note the exact text to change", "text": "Check your lab file for exactly how your name or roll number is printed \u2014 capitalisation and spacing matter for an exact match."}, {"@type": "HowToStep", "name": "Upload your PDF", "text": "Head to the <a href=\"/\">iLoveLabFile editor</a> and upload your lab file, practical file or workshop file PDF."}, {"@type": "HowToStep", "name": "Add a Find \u2192 Replace pair for each change", "text": "Add one row for the name, another for the roll number if both need fixing \u2014 you can stack as many pairs as you need."}, {"@type": "HowToStep", "name": "Run it and check both versions", "text": "Hit <b>Correct PDF</b>, then use the Original / Corrected tabs to check the change looks right before downloading."}, {"@type": "HowToStep", "name": "Download the corrected file", "text": "Save the corrected PDF \u2014 ready to submit, with the rest of the document untouched."}]
+}
+</script>
+
+<!-- Favicon placeholder — swap these hrefs for your own icon files -->
+<link rel="icon" href="/static/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --desk:#17130f;--desk2:#0f0c09;--paper:#f4efe2;--paper-line:rgba(30,26,19,.10);
+  --ink:#221e17;--ink-soft:#6a6152;--ink-faint:#948a76;
+  --red:#a1301f;--red-soft:rgba(161,48,31,.09);--red-line:rgba(161,48,31,.28);
+  --green:#3c6b4f;
+  --shadow:0 30px 70px rgba(0,0,0,.45),0 0 0 1px rgba(0,0,0,.2),0 40px 90px -30px rgba(161,48,31,.18);
+  --serif:"Source Serif 4",Georgia,serif;--sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;color:var(--paper);font-family:var(--sans);background:
+  radial-gradient(1200px 680px at 14% -10%,rgba(161,48,31,.14),transparent 60%),
+  radial-gradient(1000px 620px at 102% -4%,rgba(35,61,85,.20),transparent 58%),
+  linear-gradient(180deg,var(--desk),var(--desk2));min-height:100vh}
+a{text-decoration:none;color:inherit}
+.wrap{width:min(760px,calc(100% - 28px));margin:auto;padding:20px 0 70px}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:6px 0 20px;border-bottom:1px solid rgba(244,239,226,.08);margin-bottom:22px}
+.brand{display:flex;gap:11px;align-items:center}
+.brand-mark{width:34px;height:34px;border-radius:3px;display:grid;place-items:center;background:var(--paper);color:var(--red);font-size:16px;box-shadow:0 8px 20px rgba(0,0,0,.35),0 0 0 5px rgba(161,48,31,.08)}
+.brand-name{font-family:var(--serif);font-size:16px;font-weight:700;color:var(--paper)}
+.back{font-family:var(--mono);font-size:10.5px;color:#a99f88;border:1px solid rgba(244,239,226,.14);padding:8px 12px;border-radius:3px}
+.back:hover{border-color:var(--red);color:var(--paper)}
+.crumb{font-family:var(--mono);font-size:10px;color:#8f8672;margin-bottom:10px}
+.crumb a{color:#b6ac95}
+h1{font-family:var(--serif);font-size:clamp(26px,4.4vw,36px);font-weight:700;letter-spacing:-.01em;line-height:1.15;color:var(--paper);margin:0 0 14px}
+.intro{color:#c2b9a2;font-size:14.5px;line-height:1.8;margin:0 0 26px}
+.sheet{background:var(--paper);color:var(--ink);border-radius:4px;box-shadow:var(--shadow);padding:28px 26px}
+.steps{counter-reset:step;list-style:none;margin:0;padding:0}
+.steps li{counter-increment:step;position:relative;padding:0 0 20px 40px;font-size:13.5px;line-height:1.7;color:var(--ink-soft)}
+.steps li:last-child{padding-bottom:0}
+.steps li:before{content:counter(step);position:absolute;left:0;top:0;width:26px;height:26px;border-radius:3px;background:var(--red-soft);border:1px solid var(--red-line);color:var(--red);font-family:var(--mono);font-size:12px;font-weight:700;display:grid;place-items:center}
+.steps b{color:var(--ink)}
+.mapping{margin:22px 0 4px;display:grid;grid-template-columns:1fr 26px 1fr;align-items:center;gap:7px;font-family:var(--mono);font-size:11.5px}
+.mapping div{padding:11px 12px;border-radius:3px;background:rgba(34,30,23,.03);border:1px solid var(--paper-line)}
+.mapping span{text-align:center;color:var(--ink-faint)}
+.mapping b{display:block;font-size:8.5px;color:var(--ink-faint);margin-bottom:4px;letter-spacing:.03em}
+.rule-note{display:flex;gap:10px;margin-top:22px;padding:12px 13px;border-left:2px solid var(--red);background:var(--red-soft);border-radius:0 3px 3px 0}
+.rule-note strong{font-size:11.5px}
+.rule-note p{margin:3px 0 0;font-size:11px;line-height:1.6;color:var(--ink-soft)}
+.cta{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:26px;padding-top:20px;border-top:1px solid var(--paper-line);flex-wrap:wrap}
+.cta p{margin:0;font-size:11.5px;color:var(--ink-soft);max-width:32ch}
+.btn{height:46px;padding:0 20px;border-radius:3px;font-size:12.5px;font-weight:700;background:var(--red);color:var(--paper);display:inline-flex;align-items:center;box-shadow:0 12px 26px rgba(161,48,31,.28)}
+.btn:hover{background:#8c2a1c}
+.faq{margin-top:30px}
+.faq h2{font-family:var(--serif);font-size:19px;font-weight:700;color:var(--paper);margin:0 0 12px}
+details{border:1px solid rgba(244,239,226,.1);border-radius:3px;background:rgba(244,239,226,.02);margin-bottom:8px}
+summary{cursor:pointer;list-style:none;padding:14px 15px;font-size:12px;font-weight:600;color:var(--paper);display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}
+summary:after{content:"+";color:var(--red);font-family:var(--mono)}
+details[open] summary:after{content:"–"}
+details p{margin:0;padding:0 15px 14px;font-size:11.5px;color:#b6ac95;line-height:1.7}
+.related{margin-top:26px;padding-top:20px;border-top:1px solid rgba(244,239,226,.08)}
+.related h2{font-family:var(--serif);font-size:15px;color:var(--paper);margin:0 0 10px}
+.related a{display:block;font-size:12px;color:#c2b9a2;padding:9px 0;border-bottom:1px solid rgba(244,239,226,.06)}
+.related a:hover{color:var(--paper)}
+footer{text-align:center;margin-top:34px;color:#665f4e;font-size:10px;font-family:var(--mono)}
+@media(max-width:600px){.sheet{padding:22px 18px}.cta{flex-direction:column;align-items:stretch}.btn{justify-content:center}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="brand" href="/">
+      <div class="brand-mark">♥</div>
+      <div class="brand-name">iLoveLabFile</div>
+    </a>
+    <a class="back" href="/">← Back to tool</a>
+  </div>
+
+  <div class="crumb"><a href="/">Home</a> / Guides / DTU lab file</div>
+  <h1>How to edit your name and roll number in a DTU lab file PDF</h1>
+  <p class="intro">DTU lab files and practical files usually repeat your name and roll number on every page — which makes manually fixing a typo painful. This walks through doing it once, for the whole file, in one pass.</p>
+
+  <div class="sheet">
+    <ol class="steps">
+      <li><b>Note the exact text to change</b> — Check your lab file for exactly how your name or roll number is printed — capitalisation and spacing matter for an exact match.</li>
+      <li><b>Upload your PDF</b> — Head to the <a href="/">iLoveLabFile editor</a> and upload your lab file, practical file or workshop file PDF.</li>
+      <li><b>Add a Find → Replace pair for each change</b> — Add one row for the name, another for the roll number if both need fixing — you can stack as many pairs as you need.</li>
+      <li><b>Run it and check both versions</b> — Hit <b>Correct PDF</b>, then use the Original / Corrected tabs to check the change looks right before downloading.</li>
+      <li><b>Download the corrected file</b> — Save the corrected PDF — ready to submit, with the rest of the document untouched.</li>
+    </ol>
+
+    <div class="mapping"><div><b>FIND</b>Kalash Gulati</div><span>→</span><div><b>REPLACE</b>Vani Chaba</div></div>
+
+    <div class="rule-note">
+      <div>
+        <strong>Remember the page rule</strong>
+        <p>iLoveLabFile changes the <b>first matching occurrence on each page</b> — not every occurrence in the whole PDF. If the same text repeats twice on one page, only the first copy on that page updates.</p>
+      </div>
+    </div>
+
+    <div class="cta">
+      <p>Formatting, tables and diagrams stay untouched — only the text you target changes.</p>
+      <a class="btn" href="/">Correct my PDF →</a>
+    </div>
+  </div>
+
+  <div class="faq">
+    <h2>FAQ</h2>
+    <details><summary>Can I fix a name and a roll number at the same time?</summary><p>Yes — add a separate Find → Replace row for each. Both are applied in the same pass over the PDF.</p></details>
+    <details><summary>Does it work on scanned/image-only lab files?</summary><p>No — this only works on PDFs where the text is selectable (not a scanned image). Most college-generated lab files and Word-to-PDF exports are text-based, so this covers the common case.</p></details>
+    <details><summary>Is my file uploaded anywhere permanently?</summary><p>The tool processes your file to generate the corrected version and doesn't require you to create an account to use it.</p></details>
+  </div>
+
+  <div class="related">
+    <h2>More guides</h2>
+    <a href="/change-enrollment-number-ggsipu-pdf/">Change your enrollment number in a GGSIPU practical file</a>
+    <a href="/replace-text-college-pdf-practical-file/">Replace any text in a college PDF without reprinting</a>
+  </div>
+
+  <nav aria-label="Guides" style="margin-top:34px;padding-top:22px;border-top:1px solid rgba(244,239,226,.08);text-align:center">
+    <div style="font-family:var(--mono);font-size:9.5px;color:#8f8672;letter-spacing:.05em;margin-bottom:10px">GUIDES</div>
+    <div style="display:flex;gap:18px;justify-content:center;flex-wrap:wrap">
+      <a href="/change-enrollment-number-ggsipu-pdf/" style="font-size:11px;color:#c2b9a2">Change enrollment number (GGSIPU)</a>
+      <a href="/edit-name-roll-number-dtu-lab-file-pdf/" style="font-size:11px;color:#c2b9a2">Edit name &amp; roll number (DTU)</a>
+      <a href="/replace-text-college-pdf-practical-file/" style="font-size:11px;color:#c2b9a2">Replace text in any college PDF</a>
+    </div>
+  </nav>
+ 
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <footer>iLoveLabFile · Targeted PDF text replacement for students</footer>
+</div>
+</body>
+</html>

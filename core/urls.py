@@ -22,4 +22,6 @@ handler404 = "file_editor.views.custom_404"
 urlpatterns = [
     path('admin/', admin.site.urls),
        path('',include('file_editor.urls')),
+    
+   
 ]
