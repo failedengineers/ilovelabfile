@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17130f">
+<title>Page not found — iLoveLabFile</title>
+<meta name="robots" content="noindex,follow">
+
+<!-- Favicon placeholder — swap these hrefs for your own icon files -->
+<link rel="icon" href="/static/favicon.ico" sizes="any">
+<link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --desk:#17130f;
+  --desk2:#0f0c09;
+  --paper:#f4efe2;
+  --paper-line:rgba(30,26,19,.10);
+  --ink:#221e17;
+  --ink-soft:#6a6152;
+  --ink-faint:#948a76;
+  --red:#a1301f;
+  --red-soft:rgba(161,48,31,.09);
+  --red-line:rgba(161,48,31,.28);
+  --blue:#233d55;
+  --shadow:0 30px 70px rgba(0,0,0,.45),0 0 0 1px rgba(0,0,0,.2),0 40px 90px -30px rgba(161,48,31,.18);
+  --serif:"Source Serif 4",Georgia,serif;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --hand:"Kalam",cursive;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;min-height:100vh;color:var(--paper);font-family:var(--sans);
+  display:flex;flex-direction:column;
+  background:
+    radial-gradient(1200px 680px at 14% -10%,rgba(161,48,31,.14),transparent 60%),
+    radial-gradient(1000px 620px at 102% -4%,rgba(35,61,85,.20),transparent 58%),
+    radial-gradient(760px 480px at 50% 118%,rgba(60,107,79,.08),transparent 60%),
+    linear-gradient(180deg,var(--desk),var(--desk2));
+}
+a{text-decoration:none;color:inherit}
+
+.wrap{width:min(1220px,calc(100% - 28px));margin:auto;padding:20px 0}
+.topbar{padding:6px 0}
+.brand{display:flex;gap:11px;align-items:center;width:fit-content}
+.brand-mark{
+  width:38px;height:38px;border-radius:3px;display:grid;place-items:center;
+  background:var(--paper);color:var(--red);font-family:var(--serif);font-weight:700;font-size:19px;
+  transform:rotate(-3deg);box-shadow:0 8px 20px rgba(0,0,0,.35),0 0 0 5px rgba(161,48,31,.08);
+}
+.brand-name{font-family:var(--serif);font-size:19px;font-weight:700;letter-spacing:-.01em;color:var(--paper)}
+.brand-sub{font-size:11px;color:#9b937f;margin-top:1px}
+
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:20px 0 60px}
+
+.sheet{
+  background:var(--paper);color:var(--ink);border-radius:4px;box-shadow:var(--shadow);
+  width:min(560px,100%);padding:44px 40px 38px;text-align:center;position:relative;
+}
+.sheet:before{content:"";position:absolute;inset:0;border-radius:4px;pointer-events:none;box-shadow:inset 0 0 0 1px rgba(30,26,19,.06)}
+
+.stamp{
+  display:inline-block;position:relative;margin-bottom:8px;
+  font-family:var(--mono);font-size:12px;letter-spacing:.05em;color:var(--red);
+  border:1.5px solid var(--red-line);padding:5px 12px;border-radius:3px;
+  transform:rotate(-4deg);background:var(--red-soft);
+}
+
+.correction{position:relative;display:inline-block;white-space:nowrap;margin-top:10px}
+.correction .old{
+  display:inline-block;font-family:var(--serif);font-weight:700;font-size:clamp(52px,11vw,88px);
+  line-height:1;letter-spacing:-.02em;color:#8f8874;position:relative;
+}
+.correction .old:after{
+  content:"";position:absolute;left:-3%;right:-3%;top:52%;height:3px;background:var(--red);
+  transform:scaleX(0);transform-origin:left;animation:strike .5s .4s ease forwards;
+}
+.correction .new{
+  display:block;font-family:var(--hand);color:var(--red);font-size:20px;line-height:1;
+  margin-top:2px;transform:translateY(4px) rotate(-2deg);opacity:0;
+  animation:rise .5s .9s ease forwards;
+}
+@keyframes strike{to{transform:scaleX(1)}}
+@keyframes rise{from{opacity:0;transform:translateY(12px) rotate(-2deg)}to{opacity:1;transform:translateY(4px) rotate(-2deg)}}
+@media(prefers-reduced-motion:reduce){.correction .old:after,.correction .new{animation:none;transform:none;opacity:1}}
+
+h1{font-family:var(--serif);font-size:22px;font-weight:700;margin:20px 0 0;letter-spacing:-.01em}
+.sheet p{font-size:13px;color:var(--ink-soft);line-height:1.65;margin:10px auto 0;max-width:38ch}
+.sheet p b{color:var(--ink)}
+
+.actions{display:flex;gap:10px;justify-content:center;margin-top:26px;flex-wrap:wrap}
+.btn{
+  height:46px;padding:0 20px;border-radius:3px;font-size:12.5px;font-weight:700;
+  display:inline-flex;align-items:center;gap:8px;transition:.15s;
+}
+.btn.primary{background:var(--red);color:var(--paper);box-shadow:0 12px 26px rgba(161,48,31,.28)}
+.btn.primary:hover{background:#8c2a1c}
+.btn.ghost{border:1.3px solid rgba(34,30,23,.18);color:var(--ink-soft)}
+.btn.ghost:hover{border-color:var(--red);color:var(--red)}
+
+.foot-note{margin-top:24px;padding-top:18px;border-top:1px solid var(--paper-line);font-family:var(--mono);font-size:9.5px;color:var(--ink-faint)}
+
+footer{text-align:center;padding:0 0 20px;color:#665f4e;font-size:10px;font-family:var(--mono)}
+
+@media(max-width:520px){
+  .sheet{padding:34px 22px 30px}
+  .correction .old{font-size:clamp(40px,17vw,64px)}
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="brand" href="/">
+      <div class="brand-mark">♥</div>
+      <div>
+        <div class="brand-name">iLoveLabFile</div>
+        <div class="brand-sub">A red pen for your PDFs</div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<main>
+  <div class="sheet">
+    <span class="stamp">NO MATCH FOUND</span>
+
+    <div class="correction">
+      <span class="old">404</span>
+      <span class="new">this page doesn't exist</span>
+    </div>
+
+    <h1>We searched, but couldn't find that page.</h1>
+    <p>The link you followed is either broken, moved, or was never here — <b>no first match on this one.</b></p>
+
+    <div class="actions">
+      <a class="btn primary" href="/">Back to the editor</a>
+      <a class="btn ghost" href="mailto:ilovelabfile@gmail.com">Report a broken link</a>
+    </div>
+
+    <div class="foot-note">ERROR 404 · PAGE NOT FOUND</div>
+  </div>
+</main>
+
+<footer>iLoveLabFile · Targeted PDF text replacement for students</footer>
+</body>
+</html>
