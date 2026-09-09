@@ -90,6 +90,7 @@
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
+html,body{overflow-x:hidden}
 body{
   margin:0;color:var(--paper);background:
     radial-gradient(1200px 680px at 14% -10%,rgba(161,48,31,.14),transparent 60%),
@@ -286,17 +287,28 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
   .rule-pill{display:none}
   .editor{padding:18px}
   .upload{min-height:170px}
-  .row{grid-template-columns:16px 1fr;gap:7px;position:relative}
-  .row-num{position:absolute;left:0;top:11px}
-  .field{margin-left:16px}
-  .del{position:absolute;right:0;top:6px;width:28px;height:28px}
-  .add{margin-left:16px;width:calc(100% - 16px)}
+  .row{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    position:relative;
+    padding:26px 38px 12px 16px;
+    border:1px solid var(--paper-line);
+    border-radius:4px;
+    background:rgba(34,30,23,.02);
+  }
+  .row-num{position:absolute;left:11px;top:9px;font-size:9.5px}
+  .field{margin-left:0;width:100%}
+  .field input{height:46px}
+  .del{position:absolute;right:7px;top:7px;width:26px;height:26px}
+  .add{margin-left:0;width:100%}
   .action{flex-direction:column;align-items:stretch}
   .submit{width:100%}
   .action-copy{text-align:center}
   .uses{grid-template-columns:repeat(2,1fr)}
 }
 @media(max-width:420px){.uses{grid-template-columns:1fr}}
+@media(max-width:480px){.correction{white-space:normal}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -410,8 +422,9 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
             <iframe class="pdf-frame" id="pdfFrameAfter" title="Corrected PDF preview"></iframe>
           </div>
         </div>
-        <div class="preview-foot">
+                <div class="preview-foot">
           <a class="download-btn" id="downloadBtn" download>Download corrected PDF</a>
+          <a class="download-btn" id="openTabBtn" target="_blank" rel="noopener" style="margin-top:8px;border-color:var(--blue);background:rgba(35,61,85,.12);color:#9ec3e6;">Open preview in new tab</a>
         </div>
       </aside>
 
@@ -493,7 +506,8 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
   const pdfFrameBefore = $("pdfFrameBefore");
   const pdfFrameAfter = $("pdfFrameAfter");
   const previewEmpty = $("previewEmpty");
-  const downloadBtn = $("downloadBtn");
+    const downloadBtn = $("downloadBtn");
+  const openTabBtn = $("openTabBtn");
   const toast = $("toast");
 
   let beforeURL = null;
@@ -533,8 +547,14 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
     paneBefore.classList.toggle("active", !showAfter);
     paneAfter.classList.toggle("active", showAfter);
   }
-  tabBefore.addEventListener("click", () => setTab("before"));
-  tabAfter.addEventListener("click", () => setTab("after"));
+    function syncOpenTabBtn(){
+    const showingAfter = paneAfter.classList.contains("active");
+    const url = showingAfter ? afterURL : beforeURL;
+    if(url){ openTabBtn.href = url; openTabBtn.classList.add("show"); }
+    else { openTabBtn.removeAttribute("href"); openTabBtn.classList.remove("show"); }
+  }
+  tabBefore.addEventListener("click", () => { setTab("before"); syncOpenTabBtn(); });
+  tabAfter.addEventListener("click", () => { setTab("after"); syncOpenTabBtn(); });
 
   function makeRow(i){
     const pair = examples[i % examples.length];
@@ -575,13 +595,15 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
     });
   }
 
-  function addRow(){
+  function addRow(shouldFocus){
     const row = makeRow(rows.children.length);
     rows.appendChild(row);
     validate();
-    row.querySelector("input").focus();
-  }
+    if (shouldFocus) row.querySelector("input").focus({ preventScroll: true });
+    return row;
+}
 
+// One default replacement row — no focus, no scroll.
   function data(){
     return [...rows.children].map(row => {
       const inputs = row.querySelectorAll("input");
@@ -629,6 +651,7 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
 
     resetAfter();
     validate();
+    syncOpenTabBtn();
   }
 
   function clearSelected(){
@@ -644,18 +667,19 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
     validate();
   }
 
-  function resetAfter(){
+    function resetAfter(){
     if(afterURL){ URL.revokeObjectURL(afterURL); afterURL = null; }
     pdfFrameAfter.removeAttribute("src");
     tabAfter.disabled = true;
     downloadBtn.classList.remove("show");
     downloadBtn.removeAttribute("href");
     setTab("before");
+    syncOpenTabBtn();
   }
 
   fileInput.addEventListener("change", () => showFile(fileInput.files[0]));
   clearFile.addEventListener("click", clearSelected);
-  add.addEventListener("click", addRow);
+  add.addEventListener("click", () => addRow(true));
   rows.addEventListener("input", validate);
 
   ["dragenter","dragover"].forEach(evt => {
@@ -700,9 +724,10 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
         const outName = originalFileName.replace(/\.pdf$/i, "") + "_corrected.pdf";
         downloadBtn.href = afterURL;
         downloadBtn.setAttribute("download", outName);
-        downloadBtn.classList.add("show");
+         downloadBtn.classList.add("show");
 
-        actionCopy.innerHTML = "<strong>Done.</strong><br>Compare Original vs. Corrected on the right, then download.";
+          actionCopy.innerHTML = "<strong>Done.</strong><br>Compare Original vs. Corrected on the right, then download.";
+        syncOpenTabBtn();
         toastMsg("Corrected PDF is ready to preview.");
       } else {
         let msg = "Unexpected response from the server.";
@@ -721,7 +746,7 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
   });
 
   // One default replacement row.
-  addRow();
+   addRow(false);
 })();
 </script>
 </body>
