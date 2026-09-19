@@ -79,8 +79,9 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Kalam:wght@400;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Kalam:wght@400;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Kalam:wght@400;700&display=swap" rel="stylesheet"></noscript>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
 <style>
 :root{
@@ -91,7 +92,7 @@
   --paper-line:rgba(30,26,19,.10);
   --ink:#221e17;
   --ink-soft:#6a6152;
-  --ink-faint:#948a76;
+  --ink-faint:#6f6757;
   --red:#a1301f;
   --red-soft:rgba(161,48,31,.09);
   --red-line:rgba(161,48,31,.28);
@@ -141,7 +142,7 @@ a{text-decoration:none;color:inherit}
   background:radial-gradient(closest-side,rgba(161,48,31,.16),transparent 72%);filter:blur(6px);
 }
 .hero-kicker{font-size:11px;color:#a99f88;letter-spacing:.02em}
-.hero h1{margin:14px 0 0;font-family:var(--serif);font-weight:700;font-size:clamp(34px,5.4vw,54px);line-height:1.08;letter-spacing:-.01em;color:var(--paper)}
+.hero h1{margin:14px 0 0;font-family:var(--serif);font-weight:700;font-size:clamp(34px,5.4vw,54px);line-height:1.08;letter-spacing:-.01em;color:var(--paper);min-height:2.4em}
 .correction{position:relative;display:inline-block;white-space:nowrap}
 .correction .old{display:inline-block;color:#8f8874;font-size:.56em;position:relative;vertical-align:middle}
 .correction .old:after{
@@ -242,7 +243,7 @@ input[type=file]{display:none}
 .preview-body{flex:1;display:grid;place-items:center;min-height:0;background:#e9e2cd;margin:12px 14px 14px;border-radius:3px;overflow:hidden;position:relative}
 .preview-pane{display:none;width:100%;height:100%;position:absolute;inset:0}
 .preview-pane.active{display:block}
-.preview-empty{text-align:center;padding:30px;color:#8f8672;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.preview-empty{text-align:center;padding:30px;color:#6f6757;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .preview-art{width:82px;height:104px;margin:0 auto 15px;border:1px solid rgba(34,30,23,.14);border-radius:2px;background:#f4efe2;box-shadow:0 16px 34px rgba(0,0,0,.14);padding:16px;display:flex;flex-direction:column;gap:6px;justify-content:center}
 .preview-art i{height:4px;border-radius:1px;background:rgba(34,30,23,.14)}
 .preview-art i:nth-child(2){width:70%}.preview-art i:nth-child(3){width:83%}.preview-art i:nth-child(4){width:58%}
@@ -269,7 +270,7 @@ input[type=file]{display:none}
 .download-btn{display:none;width:100%;height:44px;border-radius:3px;border:1px solid var(--green);background:rgba(60,107,79,.12);color:#9adfb8;font-size:12px;font-weight:700;align-items:center;justify-content:center;gap:8px}
 .download-btn.show{display:flex}
 .download-btn:hover{background:rgba(60,107,79,.2)}
-.open-tab-link{display:none;text-align:center;margin-top:10px;font-family:var(--mono);font-size:10.5px;color:#8f8672;text-decoration:underline;text-underline-offset:3px}
+.open-tab-link{display:none;text-align:center;margin-top:10px;font-family:var(--mono);font-size:10.5px;color:#6f6757;text-decoration:underline;text-underline-offset:3px}
 .open-tab-link.show{display:block}
 .open-tab-link:hover{color:var(--paper)}
 
@@ -419,7 +420,20 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
             </div>
           </div>
 
-          <div class="rows" id="rows"></div>
+          <div class="rows" id="rows">
+            <div class="row">
+              <div class="row-num">1</div>
+              <div class="field find">
+                <label>Find</label>
+                <input type="text" name="old_value[]" autocomplete="off" placeholder="Kalash Gulati" aria-label="Find text">
+              </div>
+              <div class="field replace">
+                <label>Replace</label>
+                <input type="text" name="new_value[]" autocomplete="off" placeholder="Vani Chaba" aria-label="Replace text">
+              </div>
+              <button class="del" type="button" aria-label="Remove replacement">×</button>
+            </div>
+          </div>
 
           <button type="button" class="add" id="add">+ Add another replacement</button>
 
@@ -537,11 +551,13 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
   </main>
 
   <nav aria-label="Guides" style="margin-top:34px;padding-top:22px;border-top:1px solid rgba(244,239,226,.08);text-align:center">
-    <div style="font-family:var(--mono);font-size:9.5px;color:#8f8672;letter-spacing:.05em;margin-bottom:10px">GUIDES</div>
+    <div style="font-family:var(--mono);font-size:9.5px;color:#6f6757;letter-spacing:.05em;margin-bottom:10px">GUIDES</div>
     <div style="display:flex;gap:18px;justify-content:center;flex-wrap:wrap">
       <a href="/change-enrollment-number-ggsipu-pdf/" style="font-size:11px;color:#c2b9a2">Change enrollment number (GGSIPU)</a>
       <a href="/edit-name-roll-number-dtu-lab-file-pdf/" style="font-size:11px;color:#c2b9a2">Edit name &amp; roll number (DTU)</a>
       <a href="/replace-text-college-pdf-practical-file/" style="font-size:11px;color:#c2b9a2">Replace text in any college PDF</a>
+      <a href="/copied-friend-lab-file-name-change/" style="font-size:11px;color:#c2b9a2">Copied a friend's lab file? Fix the name</a>
+      <a href="/workshop-file-pdf-editor/" style="font-size:11px;color:#c2b9a2">Edit a workshop file PDF</a>
     </div>
   </nav>
 
@@ -888,8 +904,17 @@ footer{text-align:center;margin-top:36px;color:#665f4e;font-size:10px;font-famil
     }
   });
 
-  // One default replacement row — no focus, no scroll.
-  addRow(false);
+  // Wire up the delete handler on the row already in the HTML (avoids a layout shift from injecting it via JS).
+  [...rows.children].forEach(row => {
+    row.querySelector(".del").addEventListener("click", () => {
+      if(rows.children.length === 1){
+        row.querySelectorAll("input").forEach(i => i.value = "");
+        toastMsg("Keep at least one replacement row ready.");
+      } else { row.remove(); renumber(); }
+      validate();
+    });
+  });
+  validate();
 })();
 </script>
 </body>

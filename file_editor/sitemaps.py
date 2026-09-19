@@ -6,7 +6,8 @@ class StaticViewSitemap(Sitemap):
     changefreq = 'weekly'
 
     def items(self):
-        return ['file_editor', 'guide_ggsipu', 'guide_dtu', 'guide_replace_text']
+         return ['file_editor', 'guide_ggsipu', 'guide_dtu', 'guide_replace_text',
+             'guide_friend_copy', 'guide_workshop_file']
 
     def location(self, item):
         return reverse(item)

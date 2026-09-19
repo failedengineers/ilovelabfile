@@ -35,6 +35,7 @@ ALLOWED_HOSTS = [
     'www.ilovelabfile.in',
     'ilovelabfile.onrender.com',
     "127.0.0.1", "localhost",
+    
 ]
 
 # Application definition

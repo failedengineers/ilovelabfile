@@ -15,8 +15,8 @@ def file(request):
 
         old=request.POST.getlist('old_value[]')
         new=request.POST.getlist('new_value[]')
-        print(old)
-        print(new)
+        #print(old)
+        #print(new)
         if "" in old:
             return HttpResponse("Values cannot be empty")
         if "" in new:
@@ -44,3 +44,13 @@ def guide_dtu(request):
 
 def guide_replace_text(request):
     return render(request, 'guide-replace-text.html')
+
+def ai(request):
+    return render(request,'ai.html')
+
+# views.py
+def guide_friend_copy(request):
+    return render(request, 'guide-friend-copy.html')
+
+def guide_workshop_file(request):
+    return render(request, 'guide-workshop-file.html')
